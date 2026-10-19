@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#245c3a">
+    <title>Jurnal Ibadah Harian</title>
+</head>
+
+<body>
+    <main>
+        <h1>Jurnal Ibadah Harian</h1>
+
+        <nav class="tab-list" role="tablist" aria-label="Bagian jurnal">
+            <button class="tab-button" id="tab-jurnal" type="button" role="tab" aria-selected="true"
+                aria-controls="panel-jurnal">Isi Jurnal</button>
+            <button class="tab-button" id="tab-rekap" type="button" role="tab" aria-selected="false"
+                aria-controls="panel-rekap">Rekap</button>
+            <button class="tab-button" id="tab-pengingat" type="button" role="tab" aria-selected="false"
+                aria-controls="panel-pengingat">Pengingat</button>
+        </nav>
+
+        <section id="panel-jurnal" class="tab-panel" role="tabpanel" aria-labelledby="tab-jurnal">
+            <label for="tanggal">Tanggal jurnal</label>
+            <input id="tanggal" name="tanggal" type="date">
+            <h2>Amal yaumi</h2>
+
+            <label><input type="checkbox" name="salat"> Salat 5 waktu</label><br>
+            <label><input type="checkbox" name="tahajud"> Tahajud 1/3 malam</label><br>
+            <label><input type="checkbox" name="witir"> Witir setelah Isya</label><br>
+
+            <fieldset>
+                <legend>Rawatib</legend>
+                <label><input type="checkbox" name="rawatib_subuh"> Qabla Subuh</label><br>
+                <label><input type="checkbox" name="rawatib_dzuhur"> Qabla Dzuhur</label><br>
+                <label><input type="checkbox" name="rawatib_bada_dzuhur"> Ba’da Dzuhur</label><br>
+                <label><input type="checkbox" name="rawatib_maghrib"> Ba’da Maghrib</label><br>
+                <label><input type="checkbox" name="rawatib_isya"> Ba’da Isya</label>
+            </fieldset>
+
+            <label><input type="checkbox" name="dhuha"> Dhuha</label><br>
+            <label><input type="checkbox" name="shaum"> Shaum</label><br>
+
+            <label for="tilawah">Tilawah Al-Qur’an (jumlah lembar)</label>
+            <input id="tilawah" name="tilawah" type="number" min="0" value="0"><br>
+
+            <label><input type="checkbox" name="dzikir_pagi"> Dzikir pagi</label><br>
+            <label><input type="checkbox" name="dzikir_petang"> Dzikir petang</label><br>
+            <label><input type="checkbox" name="ratib"> Ratib</label><br>
+            <label><input type="checkbox" name="almulk"> Al-Mulk setelah Isya/sebelum tidur</label><br>
+            <label><input type="checkbox" name="sedekah"> Sedekah/Infak</label><br>
+            <label><input type="checkbox" name="murajaah"> Muraja’ah / Ziyadah</label>
+            <button id="simpan" type="button">Simpan jurnal</button>
+            <p id="pesan" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="panel-rekap" class="tab-panel" role="tabpanel" aria-labelledby="tab-rekap" hidden>
+            <h2>Rekap ibadah</h2>
+
+            <label for="rekap-dari">Tanggal mulai</label>
+            <input id="rekap-dari" type="date">
+
+            <label for="rekap-sampai">Tanggal akhir</label>
+            <input id="rekap-sampai" type="date">
+
+            <button id="buat-rekap" type="button">Buat rekap</button>
+            <div id="hasil-rekap" aria-live="polite"></div>
+        </section>
+
+        <section id="panel-pengingat" class="tab-panel" role="tabpanel" aria-labelledby="tab-pengingat" hidden>
+            <section class="pengingat">
+                <h2>Pengingat harian</h2>
+
+                <label for="waktu-pengingat">Jam pengingat</label>
+                <input id="waktu-pengingat" type="time" value="20:00">
+
+                <button id="aktifkan-pengingat" type="button">
+                    Aktifkan notifikasi harian
+                </button>
+                <p id="pesan-pengingat" role="status" aria-live="polite"></p>
+            </section>
+        </section>
+    </main>
+    <script src="app.js"></script>
+</body>
+
+</html>

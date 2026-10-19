@@ -1,0 +1,339 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 16px;
+    background: #f1f5f1;
+    color: #23352b;
+    font-family: system-ui, sans-serif;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 6px 24px #19301d12;
+}
+
+h1 {
+    margin-top: 0;
+    color: #245c3a;
+    font-size: 1.7rem;
+}
+
+h2 {
+    margin-top: 28px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e6eee7;
+    font-size: 1.2rem;
+}
+
+label[for="tanggal"],
+label[for="tilawah"] {
+    display: block;
+    margin: 18px 0 8px;
+    font-weight: 600;
+}
+
+input[type="date"],
+input[type="time"],
+input[type="number"] {
+    min-height: 44px;
+    padding: 8px 10px;
+    border: 1px solid #cbd8cd;
+    border-radius: 10px;
+    font: inherit;
+}
+
+input[type="date"] {
+    width: 100%;
+}
+
+.pengingat {
+    margin: 20px 0;
+    padding: 16px;
+    border: 1px solid #d8e6da;
+    border-radius: 14px;
+    background: #f5f9f5;
+}
+
+.pengingat h2 {
+    margin: 0 0 12px;
+    padding: 0;
+    border: 0;
+}
+
+.pengingat label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+}
+
+.pengingat input[type="time"] {
+    width: 100%;
+}
+
+#pesan-pengingat {
+    margin: 0;
+    color: #506454;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+input[type="number"] {
+    width: 100%;
+    max-width: 140px;
+}
+
+main>label:not([for]),
+fieldset label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 8px 4px;
+    border-bottom: 1px solid #edf1ed;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #338052;
+}
+
+fieldset {
+    margin: 16px 0;
+    padding: 8px 14px;
+    border: 1px solid #d8e3d9;
+    border-radius: 12px;
+}
+
+legend {
+    padding: 0 6px;
+    color: #245c3a;
+    font-weight: 700;
+}
+
+@media (max-width: 420px) {
+    body {
+        padding: 10px;
+    }
+
+    main {
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 1.45rem;
+    }
+}
+
+button {
+    width: 100%;
+    min-height: 48px;
+    margin: 14px 0;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 12px;
+    background: #287548;
+    color: white;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1f603a;
+}
+
+button:focus-visible {
+    outline: 3px solid #9ac8a7;
+    outline-offset: 2px;
+}
+
+#pesan {
+    min-height: 1.5em;
+    color: #245c3a;
+}
+
+#hasil-rekap {
+    margin-top: 16px;
+    display: grid;
+    gap: 14px;
+}
+
+.rekap-periode {
+    margin: 0;
+    color: #5b6f60;
+    font-size: 0.92rem;
+}
+
+.rekap-ringkasan {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.rekap-metrik {
+    display: flex;
+    min-height: 112px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 14px;
+    border: 1px solid #d8e6da;
+    border-radius: 14px;
+    background: #f3f8f3;
+}
+
+.rekap-metrik-label,
+.rekap-metrik-catatan {
+    color: #5b6f60;
+    font-size: 0.82rem;
+}
+
+.rekap-metrik-nilai {
+    color: #245c3a;
+    font-size: 1.45rem;
+    line-height: 1.2;
+}
+
+.rekap-daftar h3 {
+    margin: 2px 0 10px;
+    color: #294d35;
+    font-size: 1rem;
+}
+
+.rekap-petunjuk {
+    margin: 0 0 10px;
+    color: #5b6f60;
+    font-size: 0.88rem;
+}
+
+.rekap-kegiatan {
+    display: grid;
+    gap: 8px;
+}
+
+.rekap-kegiatan-item {
+    overflow: hidden;
+    border: 1px solid #e2eae3;
+    border-radius: 12px;
+    background: white;
+}
+
+.rekap-kegiatan-tombol {
+    display: block;
+    width: 100%;
+    min-height: auto;
+    margin: 0;
+    padding: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: white;
+    color: inherit;
+    text-align: left;
+    font: inherit;
+    font-weight: 400;
+}
+
+.rekap-kegiatan-tombol:hover {
+    background: #f8fbf8;
+}
+
+.rekap-kegiatan-tombol:focus-visible {
+    outline: 3px solid #9ac8a7;
+    outline-offset: -3px;
+}
+
+.rekap-kegiatan-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+}
+
+.rekap-kegiatan-nama {
+    font-weight: 600;
+}
+
+.rekap-kegiatan-jumlah {
+    flex: 0 0 auto;
+    color: #5b6f60;
+    font-size: 0.88rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.rekap-kegiatan-panah {
+    color: #5b6f60;
+    font-size: 1.1rem;
+    transition: transform 160ms ease;
+}
+
+.rekap-kegiatan-tombol[aria-expanded="true"] .rekap-kegiatan-panah {
+    transform: rotate(180deg);
+}
+
+.rekap-progress {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e7eee8;
+}
+
+.rekap-progress-isi {
+    height: 100%;
+    border-radius: inherit;
+    background: #338052;
+}
+
+.rekap-kegiatan-detail {
+    padding: 0 12px 12px;
+    color: #425b49;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.rekap-kegiatan-detail p {
+    margin: 0 0 5px;
+}
+
+.rekap-tanggal-list {
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding-left: 20px;
+}
+
+.rekap-kegiatan-detail[hidden] {
+    display: none;
+}
+
+.tab-list {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0 20px;
+}
+
+.tab-button {
+    flex: 1;
+    margin: 0;
+    border: 1px solid #d8e3d9;
+    background: #eaf2eb;
+    color: #245c3a;
+}
+
+.tab-button[aria-selected="true"] {
+    border-color: #287548;
+    background: #287548;
+    color: white;
+}
+
+.tab-button:not([aria-selected="true"]):hover {
+    background: #d8e8db;
+}
