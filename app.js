@@ -337,18 +337,21 @@ function buatLembarRekap({ mulai, sampai }) {
     const halaman = document.createElement("article");
     halaman.className = "lembar-rekap-bulan";
 
+    const nama = document.createElement("p");
+    nama.className = "lembar-rekap-nama";
+    const namaPengguna = namaPdfInput.value.trim() || localStorage.getItem("jurnal-ibadah-nama-pdf")?.trim() || "";
+    nama.textContent = namaPengguna ? `Nama: ${namaPengguna}` : "Nama: ______________________________";
+    halaman.append(nama);
+
     const judul = document.createElement("h1");
     judul.textContent = "JURNAL IBADAH HARIAN";
     halaman.append(judul);
 
     const meta = document.createElement("div");
     meta.className = "lembar-rekap-meta";
-    const nama = document.createElement("span");
-    const namaPengguna = namaPdfInput.value.trim();
-    nama.textContent = namaPengguna ? `NAMA: ${namaPengguna}` : "NAMA: ______________________________";
     const periode = document.createElement("span");
     periode.textContent = `PERIODE: ${namaUntuk(tanggalBulan[0], { day: "numeric", month: "long", year: "numeric" })} – ${namaUntuk(tanggalBulan.at(-1), { day: "numeric", month: "long", year: "numeric" })}`;
-    meta.append(nama, periode);
+    meta.append(periode);
     halaman.append(meta);
 
     const bulanLabel = document.createElement("h2");
