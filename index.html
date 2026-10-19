@@ -22,37 +22,77 @@
         </nav>
 
         <section id="panel-jurnal" class="tab-panel" role="tabpanel" aria-labelledby="tab-jurnal">
-            <label for="tanggal">Tanggal jurnal</label>
-            <input id="tanggal" name="tanggal" type="date">
-            <h2>Amal yaumi</h2>
+            <header class="jurnal-intro">
+                <span class="jurnal-kicker">CATATAN HARIAN</span>
+                <h2>Isi jurnal ibadah</h2>
+                <p>Isi perlahan, satu kebaikan demi satu kebaikan.</p>
+            </header>
 
-            <label><input type="checkbox" name="salat"> Salat 5 waktu</label><br>
-            <label><input type="checkbox" name="tahajud"> Tahajud 1/3 malam</label><br>
-            <label><input type="checkbox" name="witir"> Witir setelah Isya</label><br>
+            <div class="tanggal-card">
+                <label for="tanggal">Tanggal jurnal</label>
+                <input id="tanggal" name="tanggal" type="date">
+            </div>
 
-            <fieldset>
-                <legend>Rawatib</legend>
-                <label><input type="checkbox" name="rawatib_subuh"> Qabla Subuh</label><br>
-                <label><input type="checkbox" name="rawatib_dzuhur"> Qabla Dzuhur</label><br>
-                <label><input type="checkbox" name="rawatib_bada_dzuhur"> Ba’da Dzuhur</label><br>
-                <label><input type="checkbox" name="rawatib_maghrib"> Ba’da Maghrib</label><br>
-                <label><input type="checkbox" name="rawatib_isya"> Ba’da Isya</label>
-            </fieldset>
+            <section class="jurnal-kelompok" aria-labelledby="judul-salat">
+                <div class="jurnal-kelompok-header">
+                    <h3 id="judul-salat">Salat dan sunnah</h3>
+                    <span>Amalan harian</span>
+                </div>
+                <div class="jurnal-grid">
+                    <label class="ibadah-item"><input type="checkbox" name="salat"><span>Salat 5 waktu</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="tahajud"><span>Tahajud 1/3 malam</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="witir"><span>Witir setelah Isya</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="dhuha"><span>Dhuha</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="shaum"><span>Shaum</span></label>
+                </div>
 
-            <label><input type="checkbox" name="dhuha"> Dhuha</label><br>
-            <label><input type="checkbox" name="shaum"> Shaum</label><br>
+                <fieldset class="rawatib-card">
+                    <legend>Salat Rawatib</legend>
+                    <div class="jurnal-grid">
+                        <label class="ibadah-item"><input type="checkbox" name="rawatib_subuh"><span>Qabla Subuh</span></label>
+                        <label class="ibadah-item"><input type="checkbox" name="rawatib_dzuhur"><span>Qabla Dzuhur</span></label>
+                        <label class="ibadah-item"><input type="checkbox" name="rawatib_bada_dzuhur"><span>Ba’da Dzuhur</span></label>
+                        <label class="ibadah-item"><input type="checkbox" name="rawatib_maghrib"><span>Ba’da Maghrib</span></label>
+                        <label class="ibadah-item"><input type="checkbox" name="rawatib_isya"><span>Ba’da Isya</span></label>
+                    </div>
+                </fieldset>
+            </section>
 
-            <label for="tilawah">Tilawah Al-Qur’an (jumlah lembar)</label>
-            <input id="tilawah" name="tilawah" type="number" min="0" value="0"><br>
+            <section class="jurnal-kelompok" aria-labelledby="judul-quran">
+                <div class="jurnal-kelompok-header">
+                    <h3 id="judul-quran">Al-Qur’an dan dzikir</h3>
+                    <span>Tilawah dan wirid</span>
+                </div>
+                <div class="tilawah-card">
+                    <label for="tilawah">Tilawah Al-Qur’an</label>
+                    <div class="tilawah-input-baris">
+                        <input id="tilawah" name="tilawah" type="number" min="0" value="0" inputmode="numeric">
+                        <span>lembar</span>
+                    </div>
+                </div>
+                <div class="jurnal-grid">
+                    <label class="ibadah-item"><input type="checkbox" name="dzikir_pagi"><span>Dzikir pagi</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="dzikir_petang"><span>Dzikir petang</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="ratib"><span>Ratib</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="almulk"><span>Al-Mulk setelah Isya / sebelum tidur</span></label>
+                    <label class="ibadah-item"><input type="checkbox" name="murajaah"><span>Muraja’ah / Ziyadah</span></label>
+                </div>
+            </section>
 
-            <label><input type="checkbox" name="dzikir_pagi"> Dzikir pagi</label><br>
-            <label><input type="checkbox" name="dzikir_petang"> Dzikir petang</label><br>
-            <label><input type="checkbox" name="ratib"> Ratib</label><br>
-            <label><input type="checkbox" name="almulk"> Al-Mulk setelah Isya/sebelum tidur</label><br>
-            <label><input type="checkbox" name="sedekah"> Sedekah/Infak</label><br>
-            <label><input type="checkbox" name="murajaah"> Muraja’ah / Ziyadah</label>
-            <button id="simpan" type="button">Simpan jurnal</button>
-            <p id="pesan" role="status" aria-live="polite"></p>
+            <section class="jurnal-kelompok" aria-labelledby="judul-amal">
+                <div class="jurnal-kelompok-header">
+                    <h3 id="judul-amal">Amal kebaikan</h3>
+                    <span>Amalan lainnya</span>
+                </div>
+                <div class="jurnal-grid">
+                    <label class="ibadah-item"><input type="checkbox" name="sedekah"><span>Sedekah / Infak</span></label>
+                </div>
+            </section>
+
+            <div class="jurnal-aksi">
+                <button id="simpan" type="button">Simpan jurnal</button>
+                <p id="pesan" role="status" aria-live="polite"></p>
+            </div>
         </section>
 
         <section id="panel-rekap" class="tab-panel" role="tabpanel" aria-labelledby="tab-rekap" hidden>

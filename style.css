@@ -305,3 +305,193 @@ button:focus-visible {
 .tab-button:not([aria-selected="true"]):hover {
     background: #d8e8db;
 }
+
+.jurnal-intro {
+    padding: 22px;
+    border: 1px solid #d8e8da;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #f1f8f1 0%, #e8f3e9 100%);
+}
+
+.jurnal-kicker {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #4f795b;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+#panel-jurnal .jurnal-intro h2 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: #214c31;
+    font-size: 1.5rem;
+}
+
+.jurnal-intro p {
+    margin: 8px 0 0;
+    color: #5b6f60;
+    line-height: 1.5;
+}
+
+.tanggal-card {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #e2ebe3;
+    border-radius: 16px;
+    background: #fff;
+}
+
+.tanggal-card label,
+.tilawah-card label {
+    margin: 0;
+    color: #344d3b;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.tanggal-card input[type="date"] {
+    border-color: #d5e2d7;
+    background: #fbfdfb;
+}
+
+.jurnal-kelompok {
+    margin-top: 24px;
+}
+
+.jurnal-kelompok-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 11px;
+}
+
+.jurnal-kelompok-header h3 {
+    margin: 0;
+    color: #294d35;
+    font-size: 1.02rem;
+}
+
+.jurnal-kelompok-header > span {
+    color: #7a8d7e;
+    font-size: 0.78rem;
+}
+
+.jurnal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.ibadah-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 54px;
+    margin: 0;
+    padding: 11px 13px;
+    border: 1px solid #e2eae3;
+    border-radius: 13px;
+    background: #fff;
+    color: #34483a;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.ibadah-item:hover {
+    border-color: #b8d0bd;
+    background: #fbfdfb;
+}
+
+.ibadah-item:has(input:checked) {
+    border-color: #8fbd99;
+    background: #f0f7f1;
+    box-shadow: inset 3px 0 #338052;
+}
+
+.ibadah-item input[type="checkbox"] {
+    flex: 0 0 20px;
+    margin: 0;
+}
+
+.rawatib-card {
+    margin: 14px 0 0;
+    padding: 13px;
+    border-color: #e2eae3;
+    background: #f8fbf8;
+}
+
+.rawatib-card legend {
+    padding: 0 8px;
+    font-size: 0.88rem;
+}
+
+.tilawah-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+    padding: 13px 15px;
+    border: 1px solid #e2eae3;
+    border-radius: 13px;
+    background: #fff;
+}
+
+.tilawah-input-baris {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #6b7c6f;
+    font-size: 0.88rem;
+}
+
+.tilawah-input-baris input[type="number"] {
+    width: 72px;
+    min-height: 42px;
+    border-color: #d5e2d7;
+    text-align: center;
+}
+
+.jurnal-aksi {
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid #e6eee7;
+}
+
+.jurnal-aksi button {
+    margin: 0;
+    background: linear-gradient(135deg, #328052, #24663f);
+    box-shadow: 0 5px 12px #245c3a24;
+}
+
+.jurnal-aksi button:hover {
+    background: #1f603a;
+}
+
+.jurnal-aksi #pesan {
+    margin: 9px 0 0;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 480px) {
+    .jurnal-intro {
+        padding: 18px;
+    }
+
+    .jurnal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jurnal-kelompok-header > span {
+        font-size: 0.72rem;
+    }
+}
