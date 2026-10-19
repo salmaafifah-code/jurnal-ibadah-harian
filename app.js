@@ -59,9 +59,15 @@ tombolSimpan.addEventListener("click", () => {
 const rekapDari = document.querySelector("#rekap-dari");
 const rekapSampai = document.querySelector("#rekap-sampai");
 const hasilRekap = document.querySelector("#hasil-rekap");
+const namaPdfInput = document.querySelector("#nama-pdf");
 const tombolCetakRekap = document.querySelector("#cetak-rekap");
 const dokumenRekap = document.querySelector("#dokumen-rekap");
 let rentangRekapCetak = null;
+
+namaPdfInput.value = localStorage.getItem("jurnal-ibadah-nama-pdf") || "";
+namaPdfInput.addEventListener("input", () => {
+  localStorage.setItem("jurnal-ibadah-nama-pdf", namaPdfInput.value.trim());
+});
 
 const tanggalAkhirDefault = tanggalHariIni();
 const tanggalMulaiDefault = new Date(`${tanggalAkhirDefault}T00:00:00Z`);
@@ -338,7 +344,8 @@ function buatLembarRekap({ mulai, sampai }) {
     const meta = document.createElement("div");
     meta.className = "lembar-rekap-meta";
     const nama = document.createElement("span");
-    nama.textContent = "NAMA: ______________________________";
+    const namaPengguna = namaPdfInput.value.trim();
+    nama.textContent = namaPengguna ? `NAMA: ${namaPengguna}` : "NAMA: ______________________________";
     const periode = document.createElement("span");
     periode.textContent = `PERIODE: ${namaUntuk(tanggalBulan[0], { day: "numeric", month: "long", year: "numeric" })} – ${namaUntuk(tanggalBulan.at(-1), { day: "numeric", month: "long", year: "numeric" })}`;
     meta.append(nama, periode);
