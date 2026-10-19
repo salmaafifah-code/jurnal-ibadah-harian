@@ -349,7 +349,7 @@ button:focus-visible {
     margin-top: 22px;
 }
 
-.jurnal-kelompok + .jurnal-kelompok {
+.jurnal-kelompok+.jurnal-kelompok {
     padding-top: 16px;
     border-top: 1px solid #e6eee7;
 }
