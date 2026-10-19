@@ -19,8 +19,6 @@
                 aria-controls="panel-jurnal">Isi Jurnal</button>
             <button class="tab-button" id="tab-rekap" type="button" role="tab" aria-selected="false"
                 aria-controls="panel-rekap">Rekap</button>
-            <button class="tab-button" id="tab-pengingat" type="button" role="tab" aria-selected="false"
-                aria-controls="panel-pengingat">Pengingat</button>
         </nav>
 
         <section id="panel-jurnal" class="tab-panel" role="tabpanel" aria-labelledby="tab-jurnal">
@@ -70,19 +68,6 @@
             <div id="hasil-rekap" aria-live="polite"></div>
         </section>
 
-        <section id="panel-pengingat" class="tab-panel" role="tabpanel" aria-labelledby="tab-pengingat" hidden>
-            <section class="pengingat">
-                <h2>Pengingat harian</h2>
-
-                <label for="waktu-pengingat">Jam pengingat</label>
-                <input id="waktu-pengingat" type="time" value="20:00">
-
-                <button id="aktifkan-pengingat" type="button">
-                    Aktifkan notifikasi harian
-                </button>
-                <p id="pesan-pengingat" role="status" aria-live="polite"></p>
-            </section>
-        </section>
     </main>
     <script src="app.js"></script>
 </body>

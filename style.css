@@ -40,7 +40,6 @@ label[for="tilawah"] {
 }
 
 input[type="date"],
-input[type="time"],
 input[type="number"] {
     min-height: 44px;
     padding: 8px 10px;
@@ -51,37 +50,6 @@ input[type="number"] {
 
 input[type="date"] {
     width: 100%;
-}
-
-.pengingat {
-    margin: 20px 0;
-    padding: 16px;
-    border: 1px solid #d8e6da;
-    border-radius: 14px;
-    background: #f5f9f5;
-}
-
-.pengingat h2 {
-    margin: 0 0 12px;
-    padding: 0;
-    border: 0;
-}
-
-.pengingat label {
-    display: block;
-    margin-bottom: 7px;
-    font-weight: 600;
-}
-
-.pengingat input[type="time"] {
-    width: 100%;
-}
-
-#pesan-pengingat {
-    margin: 0;
-    color: #506454;
-    font-size: 0.9rem;
-    line-height: 1.45;
 }
 
 input[type="number"] {

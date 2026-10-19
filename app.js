@@ -3,26 +3,7 @@ const tilawahInput = document.querySelector("#tilawah");
 const tombolSimpan = document.querySelector("#simpan");
 const pesan = document.querySelector("#pesan");
 const kotakCentang = document.querySelectorAll('input[type="checkbox"]');
-const waktuPengingat = document.querySelector("#waktu-pengingat");
-const tombolPengingat = document.querySelector("#aktifkan-pengingat");
-const pesanPengingat = document.querySelector("#pesan-pengingat");
-
-const waktuPengingatTersimpan = localStorage.getItem("jurnal-ibadah-waktu-pengingat");
-if (waktuPengingatTersimpan) {
-  waktuPengingat.value = waktuPengingatTersimpan;
-}
-
-tombolPengingat.addEventListener("click", () => {
-  const waktu = waktuPengingat.value;
-
-  if (!waktu) {
-    pesanPengingat.textContent = "Pilih jam pengingat terlebih dahulu.";
-    return;
-  }
-
-  localStorage.setItem("jurnal-ibadah-waktu-pengingat", waktu);
-  pesanPengingat.textContent = `Pilihan jam ${waktu} tersimpan di perangkat ini. Notifikasi harian akan aktif setelah layanan push disambungkan.`;
-});
+localStorage.removeItem("jurnal-ibadah-waktu-pengingat");
 
 function tanggalHariIni() {
   const sekarang = new Date();
@@ -293,7 +274,13 @@ tabNavigasi.forEach((tab) => {
 });
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
-  navigator.serviceWorker.register("./sw.js").catch((error) => {
-    console.error("Service worker gagal didaftarkan:", error);
+  navigator.serviceWorker.getRegistration("./").then(async (registration) => {
+    if (!registration) return;
+
+    const subscription = await registration.pushManager?.getSubscription();
+    if (subscription) await subscription.unsubscribe();
+    await registration.unregister();
+  }).catch((error) => {
+    console.error("Pembersihan notifikasi lama gagal:", error);
   });
 }
