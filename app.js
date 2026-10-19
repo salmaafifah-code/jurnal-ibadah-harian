@@ -59,6 +59,9 @@ tombolSimpan.addEventListener("click", () => {
 const rekapDari = document.querySelector("#rekap-dari");
 const rekapSampai = document.querySelector("#rekap-sampai");
 const hasilRekap = document.querySelector("#hasil-rekap");
+const tombolCetakRekap = document.querySelector("#cetak-rekap");
+const dokumenRekap = document.querySelector("#dokumen-rekap");
+let rentangRekapCetak = null;
 
 const tanggalAkhirDefault = tanggalHariIni();
 const tanggalMulaiDefault = new Date(`${tanggalAkhirDefault}T00:00:00Z`);
@@ -67,16 +70,28 @@ tanggalMulaiDefault.setUTCDate(tanggalMulaiDefault.getUTCDate() - 6);
 rekapDari.value = tanggalMulaiDefault.toISOString().slice(0, 10);
 rekapSampai.value = tanggalAkhirDefault;
 
+[rekapDari, rekapSampai].forEach((input) => {
+  input.addEventListener("change", () => {
+    tombolCetakRekap.hidden = true;
+    rentangRekapCetak = null;
+  });
+});
+
 document.querySelector("#buat-rekap").addEventListener("click", () => {
   const mulai = rekapDari.value;
   const sampai = rekapSampai.value;
 
   hasilRekap.replaceChildren();
+  tombolCetakRekap.hidden = true;
+  rentangRekapCetak = null;
 
   if (!mulai || !sampai || mulai > sampai) {
     hasilRekap.textContent = "Pilih rentang tanggal yang benar.";
     return;
   }
+
+  rentangRekapCetak = { mulai, sampai };
+  tombolCetakRekap.hidden = false;
 
   let jumlahHari = 0;
   let hariTersimpan = 0;
@@ -259,6 +274,166 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
 
   daftarKegiatan.append(kegiatan);
   hasilRekap.append(daftarKegiatan);
+});
+
+function buatRentangTanggal(mulai, sampai) {
+  const tanggal = new Date(`${mulai}T00:00:00Z`);
+  const tanggalAkhir = new Date(`${sampai}T00:00:00Z`);
+  const hasil = [];
+
+  while (tanggal <= tanggalAkhir) {
+    hasil.push(tanggal.toISOString().slice(0, 10));
+    tanggal.setUTCDate(tanggal.getUTCDate() + 1);
+  }
+
+  return hasil;
+}
+
+function buatLembarRekap({ mulai, sampai }) {
+  const semuaTanggal = buatRentangTanggal(mulai, sampai);
+  const kelompokBulan = new Map();
+
+  semuaTanggal.forEach((tanggal) => {
+    const kunciBulan = tanggal.slice(0, 7);
+    if (!kelompokBulan.has(kunciBulan)) kelompokBulan.set(kunciBulan, []);
+    kelompokBulan.get(kunciBulan).push(tanggal);
+  });
+
+  const namaUntuk = (tanggal, opsi) => new Intl.DateTimeFormat("id-ID", {
+    ...opsi,
+    timeZone: "UTC",
+  }).format(new Date(`${tanggal}T00:00:00Z`));
+
+  const barisAktivitas = [
+    { type: "activity", number: "1", name: "Salat 5 waktu", key: "salat" },
+    { type: "activity", number: "2", name: "Tahajud 1/3 malam", key: "tahajud" },
+    { type: "activity", number: "3", name: "Witir setelah Isya", key: "witir" },
+    { type: "group", number: "4", name: "Rawatib:" },
+    { type: "activity", name: "Qabla Subuh", key: "rawatib_subuh" },
+    { type: "activity", name: "Qabla Dzuhur", key: "rawatib_dzuhur" },
+    { type: "activity", name: "Ba’da Dzuhur", key: "rawatib_bada_dzuhur" },
+    { type: "activity", name: "Ba’da Maghrib", key: "rawatib_maghrib" },
+    { type: "activity", name: "Ba’da Isya", key: "rawatib_isya" },
+    { type: "activity", number: "5", name: "Dhuha", key: "dhuha" },
+    { type: "activity", number: "6", name: "Shaum", key: "shaum" },
+    { type: "tilawah", number: "7", name: "Tilawah Al-Qur’an (tulis jumlah lembar)" },
+    { type: "activity", number: "8", name: "Dzikir pagi", key: "dzikir_pagi" },
+    { type: "activity", number: "9", name: "Dzikir petang", key: "dzikir_petang" },
+    { type: "activity", number: "10", name: "Ratib", key: "ratib" },
+    { type: "activity", number: "11", name: "Al-Mulk setelah Isya / sebelum tidur", key: "almulk" },
+    { type: "activity", number: "12", name: "Sedekah / Infak", key: "sedekah" },
+    { type: "activity", number: "13", name: "Muraja’ah / Ziyadah", key: "murajaah" },
+  ];
+
+  dokumenRekap.replaceChildren();
+
+  kelompokBulan.forEach((tanggalBulan, bulan) => {
+    const halaman = document.createElement("article");
+    halaman.className = "lembar-rekap-bulan";
+
+    const judul = document.createElement("h1");
+    judul.textContent = "JURNAL IBADAH HARIAN";
+    halaman.append(judul);
+
+    const meta = document.createElement("div");
+    meta.className = "lembar-rekap-meta";
+    const nama = document.createElement("span");
+    nama.textContent = "NAMA: ______________________________";
+    const periode = document.createElement("span");
+    periode.textContent = `PERIODE: ${namaUntuk(tanggalBulan[0], { day: "numeric", month: "long", year: "numeric" })} – ${namaUntuk(tanggalBulan.at(-1), { day: "numeric", month: "long", year: "numeric" })}`;
+    meta.append(nama, periode);
+    halaman.append(meta);
+
+    const bulanLabel = document.createElement("h2");
+    bulanLabel.textContent = namaUntuk(`${bulan}-01`, { month: "long", year: "numeric" });
+    halaman.append(bulanLabel);
+
+    const tabel = document.createElement("table");
+    tabel.className = "tabel-rekap-cetak";
+
+    const lebarNama = document.createElement("colgroup");
+    const colNomor = document.createElement("col");
+    colNomor.className = "kolom-nomor";
+    const colNama = document.createElement("col");
+    colNama.className = "kolom-amal";
+    lebarNama.append(colNomor, colNama);
+    tanggalBulan.forEach(() => lebarNama.append(document.createElement("col")));
+    tabel.append(lebarNama);
+
+    const thead = document.createElement("thead");
+    const barisTanggal = document.createElement("tr");
+    const no = document.createElement("th");
+    no.rowSpan = 2;
+    no.textContent = "NO";
+    const amal = document.createElement("th");
+    amal.rowSpan = 2;
+    amal.textContent = "AMAL YAUMI";
+    const tanggalHeader = document.createElement("th");
+    tanggalHeader.colSpan = tanggalBulan.length;
+    tanggalHeader.textContent = "TANGGAL";
+    barisTanggal.append(no, amal, tanggalHeader);
+    thead.append(barisTanggal);
+
+    const barisHari = document.createElement("tr");
+    tanggalBulan.forEach((tanggal) => {
+      const sel = document.createElement("th");
+      sel.textContent = String(Number(tanggal.slice(-2)));
+      sel.title = namaUntuk(tanggal, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      barisHari.append(sel);
+    });
+    thead.append(barisHari);
+    tabel.append(thead);
+
+    const tbody = document.createElement("tbody");
+    barisAktivitas.forEach((aktivitas) => {
+      const baris = document.createElement("tr");
+      if (aktivitas.type === "group") baris.className = "baris-subkelompok";
+
+      const nomor = document.createElement("td");
+      nomor.textContent = aktivitas.number || "";
+      const namaAktivitas = document.createElement("td");
+      namaAktivitas.textContent = aktivitas.name;
+      baris.append(nomor, namaAktivitas);
+
+      tanggalBulan.forEach((tanggal) => {
+        const sel = document.createElement("td");
+        sel.className = "sel-rekap-cetak";
+        const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
+        const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
+
+        if (aktivitas.type === "activity" && jurnal[aktivitas.key]) {
+          sel.textContent = "✓";
+          sel.classList.add("selesai");
+        } else if (aktivitas.type === "tilawah" && Number(jurnal.tilawah) > 0) {
+          sel.textContent = String(Number(jurnal.tilawah));
+          sel.classList.add("tilawah-terisi");
+        }
+
+        baris.append(sel);
+      });
+
+      tbody.append(baris);
+    });
+    tabel.append(tbody);
+    halaman.append(tabel);
+
+    const catatan = document.createElement("p");
+    catatan.className = "lembar-rekap-catatan";
+    catatan.textContent = "✓ Ibadah telah dilakukan. Angka pada Tilawah menunjukkan jumlah lembar.";
+    halaman.append(catatan);
+
+    dokumenRekap.append(halaman);
+  });
+}
+
+tombolCetakRekap.addEventListener("click", () => {
+  if (!rentangRekapCetak) return;
+
+  buatLembarRekap(rentangRekapCetak);
+  const judulSebelumnya = document.title;
+  document.title = `Rekap-Jurnal-Ibadah-${rentangRekapCetak.mulai}-${rentangRekapCetak.sampai}`;
+  window.print();
+  document.title = judulSebelumnya;
 });
 
 const tabNavigasi = document.querySelectorAll('[role="tab"]');
