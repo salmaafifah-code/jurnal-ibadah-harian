@@ -2,8 +2,214 @@ const tanggalInput = document.querySelector("#tanggal");
 const tilawahInput = document.querySelector("#tilawah");
 const tombolSimpan = document.querySelector("#simpan");
 const pesan = document.querySelector("#pesan");
-const kotakCentang = document.querySelectorAll('input[type="checkbox"]');
+const daftarIbadahWadah = document.querySelector("#daftar-ibadah");
+const tilawahCard = document.querySelector("#tilawah-card");
+const formIbadah = document.querySelector("#form-ibadah");
+const namaIbadahInput = document.querySelector("#nama-ibadah");
+const kelompokIbadahInput = document.querySelector("#kelompok-ibadah");
+const daftarIbadahKelola = document.querySelector("#daftar-ibadah-kelola");
+const tombolSimpanIbadah = document.querySelector("#simpan-ibadah");
+const tombolBatalEditIbadah = document.querySelector("#batal-edit-ibadah");
+const pesanKelolaIbadah = document.querySelector("#pesan-kelola-ibadah");
+const kunciDaftarIbadah = "jurnal-ibadah-daftar-kegiatan";
+const urutanKelompok = [
+  "Salat dan sunnah",
+  "Salat Rawatib",
+  "Al-Qur’an dan dzikir",
+  "Amal kebaikan",
+];
+const daftarIbadahBawaan = [
+  { id: "salat", nama: "Salat 5 waktu", kelompok: "Salat dan sunnah" },
+  { id: "tahajud", nama: "Tahajud 1/3 malam", kelompok: "Salat dan sunnah" },
+  { id: "witir", nama: "Witir setelah Isya", kelompok: "Salat dan sunnah" },
+  { id: "dhuha", nama: "Dhuha", kelompok: "Salat dan sunnah" },
+  { id: "shaum", nama: "Shaum", kelompok: "Salat dan sunnah" },
+  { id: "rawatib_subuh", nama: "Qabla Subuh", kelompok: "Salat Rawatib" },
+  { id: "rawatib_dzuhur", nama: "Qabla Dzuhur", kelompok: "Salat Rawatib" },
+  { id: "rawatib_bada_dzuhur", nama: "Ba’da Dzuhur", kelompok: "Salat Rawatib" },
+  { id: "rawatib_maghrib", nama: "Ba’da Maghrib", kelompok: "Salat Rawatib" },
+  { id: "rawatib_isya", nama: "Ba’da Isya", kelompok: "Salat Rawatib" },
+  { id: "dzikir_pagi", nama: "Dzikir pagi", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "dzikir_petang", nama: "Dzikir petang", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "ratib", nama: "Ratib", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "almulk", nama: "Al-Mulk setelah Isya / sebelum tidur", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "murajaah", nama: "Muraja’ah / Ziyadah", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "sedekah", nama: "Sedekah / Infak", kelompok: "Amal kebaikan" },
+];
+let daftarIbadah;
+try {
+  const daftarTersimpan = localStorage.getItem(kunciDaftarIbadah);
+  daftarIbadah = daftarTersimpan === null
+    ? daftarIbadahBawaan.map((item) => ({ ...item }))
+    : JSON.parse(daftarTersimpan);
+  if (!Array.isArray(daftarIbadah)) throw new Error("Format daftar ibadah tidak valid");
+} catch {
+  daftarIbadah = daftarIbadahBawaan.map((item) => ({ ...item }));
+}
+let idSedangDiedit = null;
 localStorage.removeItem("jurnal-ibadah-waktu-pengingat");
+
+function ambilKotakCentang() {
+  return daftarIbadahWadah.querySelectorAll('input[type="checkbox"]');
+}
+
+function simpanDaftarIbadah() {
+  localStorage.setItem(kunciDaftarIbadah, JSON.stringify(daftarIbadah));
+}
+
+function buatIDIbadah() {
+  return `khusus_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function renderDaftarIbadah() {
+  daftarIbadahWadah.replaceChildren();
+
+  urutanKelompok.forEach((kelompok) => {
+    const anggota = daftarIbadah.filter((item) => item.kelompok === kelompok);
+    if (!anggota.length) return;
+
+    const bagian = document.createElement("section");
+    bagian.className = "jurnal-kelompok";
+    const header = document.createElement("div");
+    header.className = "jurnal-kelompok-header";
+    const judul = document.createElement("h3");
+    judul.textContent = kelompok;
+    header.append(judul);
+    bagian.append(header);
+
+    if (kelompok === "Al-Qur’an dan dzikir") bagian.append(tilawahCard);
+
+    const daftar = document.createElement("div");
+    daftar.className = "jurnal-grid";
+
+    anggota.forEach((item) => {
+      const label = document.createElement("label");
+      label.className = "ibadah-item";
+      const kotak = document.createElement("input");
+      kotak.type = "checkbox";
+      kotak.name = item.id;
+      const teks = document.createElement("span");
+      teks.textContent = item.nama;
+      label.append(kotak, teks);
+      daftar.append(label);
+    });
+
+    bagian.append(daftar);
+    daftarIbadahWadah.append(bagian);
+  });
+
+  daftarIbadah.forEach((item) => {
+    if (urutanKelompok.includes(item.kelompok)) return;
+    item.kelompok = urutanKelompok[0];
+  });
+}
+
+function renderDaftarIbadahKelola() {
+  daftarIbadahKelola.replaceChildren();
+
+  daftarIbadah.forEach((item) => {
+    const baris = document.createElement("li");
+    const info = document.createElement("div");
+    info.className = "daftar-ibadah-info";
+    const nama = document.createElement("strong");
+    nama.textContent = item.nama;
+    const kelompok = document.createElement("span");
+    kelompok.textContent = item.kelompok;
+    info.append(nama, kelompok);
+
+    const aksi = document.createElement("div");
+    aksi.className = "daftar-ibadah-aksi";
+    const tombolEdit = document.createElement("button");
+    tombolEdit.type = "button";
+    tombolEdit.textContent = "Edit";
+    tombolEdit.addEventListener("click", () => {
+      idSedangDiedit = item.id;
+      namaIbadahInput.value = item.nama;
+      kelompokIbadahInput.value = item.kelompok;
+      tombolSimpanIbadah.textContent = "Simpan perubahan";
+      tombolBatalEditIbadah.hidden = false;
+      pesanKelolaIbadah.textContent = `Mengubah: ${item.nama}`;
+      namaIbadahInput.focus();
+    });
+
+    const tombolHapus = document.createElement("button");
+    tombolHapus.type = "button";
+    tombolHapus.textContent = "Hapus";
+    tombolHapus.addEventListener("click", () => {
+      const setuju = window.confirm(`Hapus “${item.nama}” dari daftar dan dari catatan tersimpan di perangkat ini?`);
+      if (!setuju) return;
+
+      Object.keys(localStorage).forEach((kunci) => {
+        if (!kunci.startsWith("jurnal-ibadah-") || kunci === kunciDaftarIbadah) return;
+        try {
+          const jurnal = JSON.parse(localStorage.getItem(kunci));
+          if (Object.prototype.hasOwnProperty.call(jurnal || {}, item.id)) {
+            delete jurnal[item.id];
+            localStorage.setItem(kunci, JSON.stringify(jurnal));
+          }
+        } catch {
+          // Lewati nilai lokal yang bukan catatan jurnal berbentuk JSON.
+        }
+      });
+
+      daftarIbadah = daftarIbadah.filter((kegiatan) => kegiatan.id !== item.id);
+      simpanDaftarIbadah();
+      renderDaftarIbadah();
+      renderDaftarIbadahKelola();
+      muatJurnal();
+      tandaiRekapPerluDibuatUlang();
+      if (idSedangDiedit === item.id) resetFormIbadah();
+      pesanKelolaIbadah.textContent = `“${item.nama}” telah dihapus.`;
+    });
+
+    aksi.append(tombolEdit, tombolHapus);
+    baris.append(info, aksi);
+    daftarIbadahKelola.append(baris);
+  });
+}
+
+function resetFormIbadah() {
+  idSedangDiedit = null;
+  formIbadah.reset();
+  tombolSimpanIbadah.textContent = "Tambah ibadah";
+  tombolBatalEditIbadah.hidden = true;
+}
+
+formIbadah.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const nama = namaIbadahInput.value.trim();
+  const kelompok = kelompokIbadahInput.value;
+  if (!nama) return;
+
+  const sudahAda = daftarIbadah.some((item) =>
+    item.id !== idSedangDiedit && item.nama.toLocaleLowerCase() === nama.toLocaleLowerCase()
+  );
+  if (sudahAda) {
+    pesanKelolaIbadah.textContent = "Nama ibadah itu sudah ada di daftar.";
+    return;
+  }
+
+  if (idSedangDiedit) {
+    const kegiatan = daftarIbadah.find((item) => item.id === idSedangDiedit);
+    if (kegiatan) Object.assign(kegiatan, { nama, kelompok });
+    pesanKelolaIbadah.textContent = "Perubahan ibadah disimpan.";
+  } else {
+    daftarIbadah.push({ id: buatIDIbadah(), nama, kelompok });
+    pesanKelolaIbadah.textContent = "Ibadah baru ditambahkan.";
+  }
+
+  simpanDaftarIbadah();
+  renderDaftarIbadah();
+  renderDaftarIbadahKelola();
+  resetFormIbadah();
+  muatJurnal();
+  tandaiRekapPerluDibuatUlang();
+});
+
+tombolBatalEditIbadah.addEventListener("click", resetFormIbadah);
+
+renderDaftarIbadah();
+renderDaftarIbadahKelola();
 
 function tanggalHariIni() {
   const sekarang = new Date();
@@ -23,7 +229,7 @@ function muatJurnal() {
   const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
   const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
 
-  kotakCentang.forEach((kotak) => {
+  ambilKotakCentang().forEach((kotak) => {
     kotak.checked = Boolean(jurnal[kotak.name]);
   });
 
@@ -48,7 +254,7 @@ tombolSimpan.addEventListener("click", () => {
     tilawah: Number(tilawahInput.value) || 0,
   };
 
-  kotakCentang.forEach((kotak) => {
+  ambilKotakCentang().forEach((kotak) => {
     jurnal[kotak.name] = kotak.checked;
   });
 
@@ -63,6 +269,12 @@ const namaPdfInput = document.querySelector("#nama-pdf");
 const tombolCetakRekap = document.querySelector("#cetak-rekap");
 const dokumenRekap = document.querySelector("#dokumen-rekap");
 let rentangRekapCetak = null;
+
+function tandaiRekapPerluDibuatUlang() {
+  hasilRekap.replaceChildren();
+  tombolCetakRekap.hidden = true;
+  rentangRekapCetak = null;
+}
 
 namaPdfInput.value = localStorage.getItem("jurnal-ibadah-nama-pdf") || "";
 namaPdfInput.addEventListener("input", () => {
@@ -105,7 +317,7 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
   const hitungan = {};
   const tanggalKegiatan = {};
 
-  kotakCentang.forEach((kotak) => {
+  ambilKotakCentang().forEach((kotak) => {
     hitungan[kotak.name] = 0;
     tanggalKegiatan[kotak.name] = [];
   });
@@ -124,7 +336,7 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
       hariTersimpan += 1;
       totalTilawah += Number(jurnal.tilawah) || 0;
 
-      kotakCentang.forEach((kotak) => {
+      ambilKotakCentang().forEach((kotak) => {
         if (jurnal[kotak.name]) {
           hitungan[kotak.name] += 1;
           tanggalKegiatan[kotak.name].push(tanggalTeks);
@@ -203,7 +415,7 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
   const kegiatan = document.createElement("div");
   kegiatan.className = "rekap-kegiatan";
 
-  kotakCentang.forEach((kotak) => {
+  ambilKotakCentang().forEach((kotak) => {
     const kartu = document.createElement("article");
     kartu.className = "rekap-kegiatan-item";
 
@@ -310,26 +522,26 @@ function buatLembarRekap({ mulai, sampai }) {
     timeZone: "UTC",
   }).format(new Date(`${tanggal}T00:00:00Z`));
 
-  const barisAktivitas = [
-    { type: "activity", number: "1", name: "Salat 5 waktu", key: "salat" },
-    { type: "activity", number: "2", name: "Tahajud 1/3 malam", key: "tahajud" },
-    { type: "activity", number: "3", name: "Witir setelah Isya", key: "witir" },
-    { type: "group", number: "4", name: "Rawatib:" },
-    { type: "activity", name: "Qabla Subuh", key: "rawatib_subuh" },
-    { type: "activity", name: "Qabla Dzuhur", key: "rawatib_dzuhur" },
-    { type: "activity", name: "Ba’da Dzuhur", key: "rawatib_bada_dzuhur" },
-    { type: "activity", name: "Ba’da Maghrib", key: "rawatib_maghrib" },
-    { type: "activity", name: "Ba’da Isya", key: "rawatib_isya" },
-    { type: "activity", number: "5", name: "Dhuha", key: "dhuha" },
-    { type: "activity", number: "6", name: "Shaum", key: "shaum" },
-    { type: "tilawah", number: "7", name: "Tilawah Al-Qur’an (tulis jumlah lembar)" },
-    { type: "activity", number: "8", name: "Dzikir pagi", key: "dzikir_pagi" },
-    { type: "activity", number: "9", name: "Dzikir petang", key: "dzikir_petang" },
-    { type: "activity", number: "10", name: "Ratib", key: "ratib" },
-    { type: "activity", number: "11", name: "Al-Mulk setelah Isya / sebelum tidur", key: "almulk" },
-    { type: "activity", number: "12", name: "Sedekah / Infak", key: "sedekah" },
-    { type: "activity", number: "13", name: "Muraja’ah / Ziyadah", key: "murajaah" },
-  ];
+  const barisAktivitas = [];
+  let nomorAktivitas = 1;
+  urutanKelompok.forEach((kelompok) => {
+    const anggota = daftarIbadah.filter((item) => item.kelompok === kelompok);
+    if (!anggota.length && kelompok !== "Al-Qur’an dan dzikir") return;
+    barisAktivitas.push({ type: "group", name: kelompok });
+
+    if (kelompok === "Al-Qur’an dan dzikir") {
+      barisAktivitas.push({ type: "tilawah", number: String(nomorAktivitas++), name: "Tilawah Al-Qur’an (jumlah lembar)" });
+    }
+
+    anggota.forEach((item) => {
+      barisAktivitas.push({
+        type: "activity",
+        number: String(nomorAktivitas++),
+        name: item.nama,
+        key: item.id,
+      });
+    });
+  });
 
   dokumenRekap.replaceChildren();
 

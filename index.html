@@ -32,58 +32,36 @@
                 <input id="tanggal" name="tanggal" type="date">
             </div>
 
-            <section class="jurnal-kelompok" aria-labelledby="judul-salat">
-                <div class="jurnal-kelompok-header">
-                    <h3 id="judul-salat">Salat dan sunnah</h3>
-                </div>
-                <div class="jurnal-grid">
-                    <label class="ibadah-item"><input type="checkbox" name="salat"><span>Salat 5 waktu</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="tahajud"><span>Tahajud 1/3 malam</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="witir"><span>Witir setelah Isya</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="dhuha"><span>Dhuha</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="shaum"><span>Shaum</span></label>
-                </div>
-
-                <fieldset class="rawatib-card">
-                    <legend>Salat Rawatib</legend>
-                    <div class="jurnal-grid">
-                        <label class="ibadah-item"><input type="checkbox" name="rawatib_subuh"><span>Qabla Subuh</span></label>
-                        <label class="ibadah-item"><input type="checkbox" name="rawatib_dzuhur"><span>Qabla Dzuhur</span></label>
-                        <label class="ibadah-item"><input type="checkbox" name="rawatib_bada_dzuhur"><span>Ba’da Dzuhur</span></label>
-                        <label class="ibadah-item"><input type="checkbox" name="rawatib_maghrib"><span>Ba’da Maghrib</span></label>
-                        <label class="ibadah-item"><input type="checkbox" name="rawatib_isya"><span>Ba’da Isya</span></label>
+            <details class="kelola-ibadah">
+                <summary>Atur daftar ibadah</summary>
+                <p class="kelola-ibadah-petunjuk">Tambahkan ibadah, ubah nama atau kelompoknya, dan hapus yang tidak diperlukan.</p>
+                <form id="form-ibadah">
+                    <label for="nama-ibadah">Nama ibadah</label>
+                    <input id="nama-ibadah" type="text" maxlength="80" required placeholder="Contoh: Membaca Al-Kahfi">
+                    <label for="kelompok-ibadah">Kelompok</label>
+                    <select id="kelompok-ibadah" required>
+                        <option>Salat dan sunnah</option>
+                        <option>Salat Rawatib</option>
+                        <option>Al-Qur’an dan dzikir</option>
+                        <option>Amal kebaikan</option>
+                    </select>
+                    <div class="kelola-form-aksi">
+                        <button id="simpan-ibadah" type="submit">Tambah ibadah</button>
+                        <button id="batal-edit-ibadah" type="button" hidden>Batal</button>
                     </div>
-                </fieldset>
-            </section>
+                </form>
+                <ul id="daftar-ibadah-kelola" class="daftar-ibadah-kelola"></ul>
+                <p id="pesan-kelola-ibadah" class="pesan-kelola-ibadah" role="status" aria-live="polite"></p>
+            </details>
 
-            <section class="jurnal-kelompok" aria-labelledby="judul-quran">
-                <div class="jurnal-kelompok-header">
-                    <h3 id="judul-quran">Al-Qur’an dan dzikir</h3>
+            <div id="tilawah-card" class="tilawah-card">
+                <label for="tilawah">Tilawah Al-Qur’an</label>
+                <div class="tilawah-input-baris">
+                    <input id="tilawah" name="tilawah" type="number" min="0" value="0" inputmode="numeric">
+                    <span>lembar</span>
                 </div>
-                <div class="tilawah-card">
-                    <label for="tilawah">Tilawah Al-Qur’an</label>
-                    <div class="tilawah-input-baris">
-                        <input id="tilawah" name="tilawah" type="number" min="0" value="0" inputmode="numeric">
-                        <span>lembar</span>
-                    </div>
-                </div>
-                <div class="jurnal-grid">
-                    <label class="ibadah-item"><input type="checkbox" name="dzikir_pagi"><span>Dzikir pagi</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="dzikir_petang"><span>Dzikir petang</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="ratib"><span>Ratib</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="almulk"><span>Al-Mulk setelah Isya / sebelum tidur</span></label>
-                    <label class="ibadah-item"><input type="checkbox" name="murajaah"><span>Muraja’ah / Ziyadah</span></label>
-                </div>
-            </section>
-
-            <section class="jurnal-kelompok" aria-labelledby="judul-amal">
-                <div class="jurnal-kelompok-header">
-                    <h3 id="judul-amal">Amal kebaikan</h3>
-                </div>
-                <div class="jurnal-grid">
-                    <label class="ibadah-item"><input type="checkbox" name="sedekah"><span>Sedekah / Infak</span></label>
-                </div>
-            </section>
+            </div>
+            <div id="daftar-ibadah"></div>
 
             <div class="jurnal-aksi">
                 <button id="simpan" type="button">Simpan jurnal</button>

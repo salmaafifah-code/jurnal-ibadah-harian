@@ -346,6 +346,125 @@ button:focus-visible {
     font-size: 0.92rem;
 }
 
+.kelola-ibadah {
+    margin: 14px 0 18px;
+    padding: 12px 14px;
+    border: 1px solid #dfe8e0;
+    border-radius: 12px;
+    background: #f8fbf8;
+}
+
+.kelola-ibadah summary {
+    color: #245c3a;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.kelola-ibadah-petunjuk {
+    margin: 10px 0 14px;
+    color: #5b6f60;
+    font-size: 0.88rem;
+    line-height: 1.45;
+}
+
+#form-ibadah label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #34483a;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#form-ibadah input,
+#form-ibadah select {
+    display: block;
+    width: 100%;
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #cbd8cd;
+    border-radius: 9px;
+    background: white;
+    color: inherit;
+    font: inherit;
+}
+
+.kelola-form-aksi {
+    display: flex;
+    gap: 8px;
+}
+
+.kelola-form-aksi button {
+    min-height: 42px;
+    margin: 10px 0 4px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+}
+
+#batal-edit-ibadah {
+    border: 1px solid #d8e3d9;
+    background: white;
+    color: #34483a;
+}
+
+.daftar-ibadah-kelola {
+    display: grid;
+    gap: 7px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.daftar-ibadah-kelola li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 0;
+    border-top: 1px solid #e5ece6;
+}
+
+.daftar-ibadah-info {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    font-size: 0.86rem;
+}
+
+.daftar-ibadah-info strong {
+    overflow-wrap: anywhere;
+}
+
+.daftar-ibadah-info span {
+    color: #708174;
+    font-size: 0.78rem;
+}
+
+.daftar-ibadah-aksi {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 5px;
+}
+
+.daftar-ibadah-aksi button {
+    width: auto;
+    min-height: 34px;
+    margin: 0;
+    padding: 5px 9px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.daftar-ibadah-aksi button:last-child {
+    background: #f7eeee;
+    color: #8d3838;
+}
+
+.pesan-kelola-ibadah {
+    margin: 8px 0 0;
+    color: #245c3a;
+    font-size: 0.85rem;
+}
+
 .tanggal-card {
     display: grid;
     gap: 6px;
