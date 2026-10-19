@@ -346,30 +346,37 @@ button:focus-visible {
 }
 
 .jurnal-kelompok {
-    margin-top: 21px;
+    margin-top: 22px;
+}
+
+.jurnal-kelompok + .jurnal-kelompok {
+    padding-top: 16px;
+    border-top: 1px solid #e6eee7;
 }
 
 .jurnal-kelompok-header {
-    margin-bottom: 8px;
+    margin-bottom: 7px;
 }
 
 .jurnal-kelompok-header h3 {
     margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e6eee7;
     color: #294d35;
     font-size: 1rem;
+    line-height: 1.35;
 }
 
 .jurnal-grid {
     display: grid;
     grid-template-columns: 1fr;
-    border-top: 1px solid #e9eee9;
 }
 
 .ibadah-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 48px;
+    min-height: 46px;
     margin: 0;
     padding: 9px 4px;
     border: 0;
@@ -397,17 +404,17 @@ button:focus-visible {
 }
 
 .rawatib-card {
-    margin: 16px 0 0;
-    padding: 10px 0 0;
+    margin: 13px 0 0;
+    padding: 0;
     border: 0;
-    border-top: 1px solid #e6eee7;
     border-radius: 0;
 }
 
 .rawatib-card legend {
-    padding: 0 6px 0 0;
+    margin-bottom: 6px;
+    padding: 0;
     color: #526b59;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 600;
 }
 
@@ -465,7 +472,7 @@ button:focus-visible {
     }
 
     .ibadah-item {
-        min-height: 46px;
+        min-height: 44px;
         font-size: 0.9rem;
     }
 }
