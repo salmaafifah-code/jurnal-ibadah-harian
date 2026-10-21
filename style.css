@@ -491,17 +491,25 @@ button:focus-visible {
     align-items: center;
     gap: 12px;
     margin: 14px 0 4px;
-    padding: 12px;
+    min-height: 58px;
+    padding: 14px;
     border: 1px solid #e8c5c8;
     border-radius: 12px;
     background: #fff7f7;
     cursor: pointer;
 }
 
+.udzur-toggle:has(input:checked) {
+    border-color: #d998a0;
+    background: #fff3f4;
+}
+
 .udzur-toggle input[type="checkbox"] {
-    flex: 0 0 20px;
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
     margin: 0;
-    accent-color: #b42332;
+    accent-color: #b42332 !important;
 }
 
 .udzur-toggle span {
@@ -512,12 +520,6 @@ button:focus-visible {
 .udzur-toggle strong {
     color: #922b36;
     font-size: 0.92rem;
-}
-
-.udzur-toggle small {
-    color: #6c5a5c;
-    font-size: 0.8rem;
-    line-height: 1.4;
 }
 
 .jurnal-kelompok {

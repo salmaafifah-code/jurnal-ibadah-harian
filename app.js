@@ -38,9 +38,6 @@ const daftarIbadahBawaan = [
   { id: "sedekah", nama: "Sedekah / Infak", kelompok: "Amal kebaikan" },
   { id: "olahraga", nama: "Olahraga", kelompok: "Amal kebaikan" },
 ];
-const idIbadahSaatUdzur = new Set([
-  "dzikir_pagi", "dzikir_petang", "ratib", "almulk", "murajaah", "sedekah", "olahraga",
-]);
 let daftarIbadah;
 try {
   const daftarTersimpan = localStorage.getItem(kunciDaftarIbadah);
@@ -78,11 +75,19 @@ function buatIDIbadah() {
 function renderDaftarIbadah() {
   daftarIbadahWadah.replaceChildren();
   tilawahCard.hidden = udzurInput.checked;
+  const kelompokTermasukSaatUdzur = (kelompok) => {
+    const namaKelompok = kelompok.trim().toLocaleLowerCase("id-ID");
+    return namaKelompok.includes("dzikir") || namaKelompok === "amal kebaikan";
+  };
   const daftarDitampilkan = udzurInput.checked
-    ? daftarIbadah.filter((item) => idIbadahSaatUdzur.has(item.id) || item.nama.toLocaleLowerCase() === "olahraga")
+    ? daftarIbadah.filter((item) => kelompokTermasukSaatUdzur(item.kelompok))
     : daftarIbadah;
 
-  urutanKelompok.forEach((kelompok) => {
+  const kelompokDitampilkan = udzurInput.checked
+    ? urutanKelompok.filter(kelompokTermasukSaatUdzur)
+    : urutanKelompok;
+
+  kelompokDitampilkan.forEach((kelompok) => {
     const anggota = daftarDitampilkan.filter((item) => item.kelompok === kelompok);
     if (!anggota.length) return;
 
@@ -91,7 +96,7 @@ function renderDaftarIbadah() {
     const header = document.createElement("div");
     header.className = "jurnal-kelompok-header";
     const judul = document.createElement("h3");
-    judul.textContent = udzurInput.checked && kelompok === "Al-Qur’an dan dzikir"
+    judul.textContent = udzurInput.checked && kelompokTermasukSaatUdzur(kelompok) && kelompok !== "Amal kebaikan"
       ? "Dzikir"
       : kelompok;
     header.append(judul);
