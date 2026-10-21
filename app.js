@@ -91,7 +91,9 @@ function renderDaftarIbadah() {
     const header = document.createElement("div");
     header.className = "jurnal-kelompok-header";
     const judul = document.createElement("h3");
-    judul.textContent = kelompok;
+    judul.textContent = udzurInput.checked && kelompok === "Al-Qur’an dan dzikir"
+      ? "Dzikir"
+      : kelompok;
     header.append(judul);
     bagian.append(header);
 
