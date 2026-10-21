@@ -1,5 +1,6 @@
 const tanggalInput = document.querySelector("#tanggal");
 const tilawahInput = document.querySelector("#tilawah");
+const udzurInput = document.querySelector("#sedang-udzur");
 const tombolSimpan = document.querySelector("#simpan");
 const pesan = document.querySelector("#pesan");
 const daftarIbadahWadah = document.querySelector("#daftar-ibadah");
@@ -32,10 +33,14 @@ const daftarIbadahBawaan = [
   { id: "dzikir_pagi", nama: "Dzikir pagi", kelompok: "Al-Qur’an dan dzikir" },
   { id: "dzikir_petang", nama: "Dzikir petang", kelompok: "Al-Qur’an dan dzikir" },
   { id: "ratib", nama: "Ratib", kelompok: "Al-Qur’an dan dzikir" },
-  { id: "almulk", nama: "Al-Mulk setelah Isya / sebelum tidur", kelompok: "Al-Qur’an dan dzikir" },
+  { id: "almulk", nama: "Al-Mulk sebelum tidur", kelompok: "Al-Qur’an dan dzikir" },
   { id: "murajaah", nama: "Muraja’ah / Ziyadah", kelompok: "Al-Qur’an dan dzikir" },
   { id: "sedekah", nama: "Sedekah / Infak", kelompok: "Amal kebaikan" },
+  { id: "olahraga", nama: "Olahraga", kelompok: "Amal kebaikan" },
 ];
+const idIbadahSaatUdzur = new Set([
+  "dzikir_pagi", "dzikir_petang", "ratib", "almulk", "murajaah", "sedekah", "olahraga",
+]);
 let daftarIbadah;
 try {
   const daftarTersimpan = localStorage.getItem(kunciDaftarIbadah);
@@ -46,12 +51,16 @@ try {
 } catch {
   daftarIbadah = daftarIbadahBawaan.map((item) => ({ ...item }));
 }
+if (!daftarIbadah.some((item) => item.id === "olahraga" || item.nama.toLocaleLowerCase() === "olahraga")) {
+  daftarIbadah.push({ id: "olahraga", nama: "Olahraga", kelompok: "Amal kebaikan" });
+  localStorage.setItem(kunciDaftarIbadah, JSON.stringify(daftarIbadah));
+}
+const alMulkTersimpan = daftarIbadah.find((item) => item.id === "almulk");
+if (alMulkTersimpan && alMulkTersimpan.nama === "Al-Mulk setelah Isya / sebelum tidur") {
+  alMulkTersimpan.nama = "Al-Mulk sebelum tidur";
+  localStorage.setItem(kunciDaftarIbadah, JSON.stringify(daftarIbadah));
+}
 let idSedangDiedit = null;
-let cloudMode = false;
-let cloudContext = null;
-let cloudActivities = [];
-let cloudRangeRecords = new Map();
-let idTilawahCloud = null;
 localStorage.removeItem("jurnal-ibadah-waktu-pengingat");
 
 function ambilKotakCentang() {
@@ -68,9 +77,13 @@ function buatIDIbadah() {
 
 function renderDaftarIbadah() {
   daftarIbadahWadah.replaceChildren();
+  tilawahCard.hidden = udzurInput.checked;
+  const daftarDitampilkan = udzurInput.checked
+    ? daftarIbadah.filter((item) => idIbadahSaatUdzur.has(item.id) || item.nama.toLocaleLowerCase() === "olahraga")
+    : daftarIbadah;
 
   urutanKelompok.forEach((kelompok) => {
-    const anggota = daftarIbadah.filter((item) => item.kelompok === kelompok);
+    const anggota = daftarDitampilkan.filter((item) => item.kelompok === kelompok);
     if (!anggota.length) return;
 
     const bagian = document.createElement("section");
@@ -229,31 +242,12 @@ function kunciUntukTanggal(tanggal) {
   return `jurnal-ibadah-${tanggal}`;
 }
 
-async function muatJurnal() {
+function muatJurnal(preserveMode = false) {
   const tanggal = tanggalInput.value;
-  if (cloudMode && cloudContext) {
-    try {
-      const jurnalCloud = await window.jurnalCloud.loadDay(
-        cloudContext.membership.id,
-        cloudContext.membership.community_id,
-        tanggal
-      );
-      cloudRangeRecords.set(tanggal, jurnalCloud);
-      ambilKotakCentang().forEach((kotak) => {
-        kotak.checked = Boolean(jurnalCloud[kotak.name]);
-      });
-      tilawahInput.value = jurnalCloud[idTilawahCloud] ?? 0;
-      pesan.textContent = Object.keys(jurnalCloud).length
-        ? "Jurnal akun ini dimuat dari database."
-        : "Belum ada jurnal tersimpan untuk tanggal ini.";
-    } catch (error) {
-      pesan.textContent = `Jurnal gagal dimuat: ${error.message}`;
-    }
-    return;
-  }
-
   const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
   const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
+  if (!preserveMode) udzurInput.checked = Boolean(jurnal.udzur);
+  renderDaftarIbadah();
 
   ambilKotakCentang().forEach((kotak) => {
     kotak.checked = Boolean(jurnal[kotak.name]);
@@ -267,8 +261,15 @@ tanggalInput.value = tanggalHariIni();
 muatJurnal();
 
 tanggalInput.addEventListener("change", muatJurnal);
+udzurInput.addEventListener("change", () => {
+  renderDaftarIbadah();
+  muatJurnal(true);
+  pesan.textContent = udzurInput.checked
+    ? "Mode udzur aktif. Pilih amalan yang ingin dicatat."
+    : "Mode jurnal biasa aktif.";
+});
 
-tombolSimpan.addEventListener("click", async () => {
+tombolSimpan.addEventListener("click", () => {
   const tanggal = tanggalInput.value;
 
   if (!tanggal) {
@@ -277,36 +278,13 @@ tombolSimpan.addEventListener("click", async () => {
   }
 
   const jurnal = {
-    tilawah: Number(tilawahInput.value) || 0,
+    tilawah: udzurInput.checked ? 0 : Number(tilawahInput.value) || 0,
+    udzur: udzurInput.checked,
   };
 
   ambilKotakCentang().forEach((kotak) => {
     jurnal[kotak.name] = kotak.checked;
   });
-
-  if (cloudMode && cloudContext) {
-    tombolSimpan.disabled = true;
-    pesan.textContent = "Menyimpan jurnal ke akun…";
-    try {
-      const nilaiCloud = { ...jurnal };
-      nilaiCloud[idTilawahCloud] = nilaiCloud.tilawah;
-      delete nilaiCloud.tilawah;
-      await window.jurnalCloud.saveDay(
-        cloudContext.membership.id,
-        cloudContext.membership.community_id,
-        tanggal,
-        cloudActivities,
-        nilaiCloud
-      );
-      cloudRangeRecords.set(tanggal, nilaiCloud);
-      pesan.textContent = "Jurnal berhasil disimpan ke akun.";
-    } catch (error) {
-      pesan.textContent = `Jurnal gagal disimpan: ${error.message}`;
-    } finally {
-      tombolSimpan.disabled = false;
-    }
-    return;
-  }
 
   localStorage.setItem(kunciUntukTanggal(tanggal), JSON.stringify(jurnal));
   pesan.textContent = "Jurnal berhasil disimpan.";
@@ -345,7 +323,7 @@ rekapSampai.value = tanggalAkhirDefault;
   });
 });
 
-document.querySelector("#buat-rekap").addEventListener("click", async () => {
+document.querySelector("#buat-rekap").addEventListener("click", () => {
   const mulai = rekapDari.value;
   const sampai = rekapSampai.value;
 
@@ -358,26 +336,6 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
     return;
   }
 
-  if (cloudMode && cloudContext) {
-    const tombolBuatRekap = document.querySelector("#buat-rekap");
-    tombolBuatRekap.disabled = true;
-    hasilRekap.textContent = "Memuat rekap dari database…";
-    try {
-      cloudRangeRecords = await window.jurnalCloud.loadRange(
-        cloudContext.membership.id,
-        cloudContext.membership.community_id,
-        mulai,
-        sampai
-      );
-    } catch (error) {
-      hasilRekap.textContent = `Rekap gagal dimuat: ${error.message}`;
-      tombolBuatRekap.disabled = false;
-      return;
-    }
-    tombolBuatRekap.disabled = false;
-    hasilRekap.replaceChildren();
-  }
-
   rentangRekapCetak = { mulai, sampai };
   tombolCetakRekap.hidden = false;
 
@@ -387,9 +345,9 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
   const hitungan = {};
   const tanggalKegiatan = {};
 
-  ambilKotakCentang().forEach((kotak) => {
-    hitungan[kotak.name] = 0;
-    tanggalKegiatan[kotak.name] = [];
+  daftarIbadah.forEach((item) => {
+    hitungan[item.id] = 0;
+    tanggalKegiatan[item.id] = [];
   });
 
   const tanggal = new Date(`${mulai}T00:00:00Z`);
@@ -397,22 +355,19 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
 
   while (tanggal <= tanggalAkhir) {
     const tanggalTeks = tanggal.toISOString().slice(0, 10);
-    const jurnalCloud = cloudMode ? cloudRangeRecords.get(tanggalTeks) : undefined;
-    const tersimpan = cloudMode
-      ? (jurnalCloud ? JSON.stringify(jurnalCloud) : null)
-      : localStorage.getItem(kunciUntukTanggal(tanggalTeks));
+    const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggalTeks));
 
     jumlahHari += 1;
 
     if (tersimpan) {
       const jurnal = JSON.parse(tersimpan);
       hariTersimpan += 1;
-      totalTilawah += Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah) || 0;
+      totalTilawah += Number(jurnal.tilawah) || 0;
 
-      ambilKotakCentang().forEach((kotak) => {
-        if (jurnal[kotak.name]) {
-          hitungan[kotak.name] += 1;
-          tanggalKegiatan[kotak.name].push(tanggalTeks);
+      daftarIbadah.forEach((item) => {
+        if (jurnal[item.id]) {
+          hitungan[item.id] += 1;
+          tanggalKegiatan[item.id].push(tanggalTeks);
         }
       });
     }
@@ -488,7 +443,7 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
   const kegiatan = document.createElement("div");
   kegiatan.className = "rekap-kegiatan";
 
-  ambilKotakCentang().forEach((kotak) => {
+  daftarIbadah.forEach((item) => {
     const kartu = document.createElement("article");
     kartu.className = "rekap-kegiatan-item";
 
@@ -502,11 +457,11 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
 
     const nama = document.createElement("span");
     nama.className = "rekap-kegiatan-nama";
-    nama.textContent = kotak.closest("label").textContent.trim();
+    nama.textContent = item.nama;
 
     const jumlah = document.createElement("span");
     jumlah.className = "rekap-kegiatan-jumlah";
-    jumlah.textContent = `${hitungan[kotak.name]} / ${jumlahHari} hari`;
+    jumlah.textContent = `${hitungan[item.id]} / ${jumlahHari} hari`;
 
     const panah = document.createElement("span");
     panah.className = "rekap-kegiatan-panah";
@@ -514,7 +469,7 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
     panah.textContent = "⌄";
     bagianAtas.append(nama, jumlah, panah);
 
-    const persentase = Math.round((hitungan[kotak.name] / jumlahHari) * 100);
+    const persentase = Math.round((hitungan[item.id] / jumlahHari) * 100);
     const jalur = document.createElement("div");
     jalur.className = "rekap-progress";
 
@@ -534,7 +489,7 @@ document.querySelector("#buat-rekap").addEventListener("click", async () => {
     rincianTanggal.className = "rekap-kegiatan-detail";
     rincianTanggal.hidden = true;
 
-    const daftarTanggal = tanggalKegiatan[kotak.name];
+    const daftarTanggal = tanggalKegiatan[item.id];
     if (daftarTanggal.length) {
       const labelTanggal = document.createElement("p");
       labelTanggal.textContent = "Dicentang pada:";
@@ -674,6 +629,11 @@ function buatLembarRekap({ mulai, sampai }) {
       const sel = document.createElement("th");
       sel.textContent = String(Number(tanggal.slice(-2)));
       sel.title = namaUntuk(tanggal, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const jurnalTersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
+      if (jurnalTersimpan && JSON.parse(jurnalTersimpan).udzur) {
+        sel.classList.add("tanggal-udzur");
+        sel.title += " — Sedang udzur";
+      }
       barisHari.append(sel);
     });
     thead.append(barisHari);
@@ -693,17 +653,14 @@ function buatLembarRekap({ mulai, sampai }) {
       tanggalBulan.forEach((tanggal) => {
         const sel = document.createElement("td");
         sel.className = "sel-rekap-cetak";
-        const jurnalCloud = cloudMode ? cloudRangeRecords.get(tanggal) : undefined;
-        const tersimpan = cloudMode
-          ? (jurnalCloud ? JSON.stringify(jurnalCloud) : null)
-          : localStorage.getItem(kunciUntukTanggal(tanggal));
+        const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
         const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
 
         if (aktivitas.type === "activity" && jurnal[aktivitas.key]) {
           sel.textContent = "✓";
           sel.classList.add("selesai");
-        } else if (aktivitas.type === "tilawah" && Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah) > 0) {
-          sel.textContent = String(Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah));
+        } else if (aktivitas.type === "tilawah" && Number(jurnal.tilawah) > 0) {
+          sel.textContent = String(Number(jurnal.tilawah));
           sel.classList.add("tilawah-terisi");
         }
 
@@ -717,7 +674,7 @@ function buatLembarRekap({ mulai, sampai }) {
 
     const catatan = document.createElement("p");
     catatan.className = "lembar-rekap-catatan";
-    catatan.textContent = "✓ Ibadah telah dilakukan. Angka pada Tilawah menunjukkan jumlah lembar.";
+    catatan.textContent = "✓ Ibadah telah dilakukan. Angka pada Tilawah menunjukkan jumlah lembar. Tanggal berwarna merah menandakan sedang udzur.";
     halaman.append(catatan);
 
     dokumenRekap.append(halaman);
@@ -745,34 +702,6 @@ tabNavigasi.forEach((tab) => {
     });
   });
 });
-
-async function tampilkanJurnalSantri(membership, profile) {
-  const setupDetail = document.querySelector("#setup-detail");
-  const setupMessage = document.querySelector("#setup-message");
-  const main = document.querySelector("main");
-  setupDetail.textContent = "Memuat daftar ibadah komunitas…";
-  try {
-    const activities = await window.jurnalCloud.loadActivities(membership.community_id);
-    cloudActivities = activities;
-    idTilawahCloud = activities.find((activity) => activity.input_type === "quantity")?.id || null;
-    daftarIbadah = activities
-      .filter((activity) => activity.input_type === "checkbox")
-      .map((activity) => ({ id: activity.id, nama: activity.name, kelompok: activity.group_name }));
-    cloudMode = true;
-    cloudContext = { membership };
-    document.querySelector(".kelola-ibadah").hidden = true;
-    tilawahCard.hidden = !idTilawahCloud;
-    namaPdfInput.value = profile?.display_name || "";
-    renderDaftarIbadah();
-    renderDaftarIbadahKelola();
-    main.hidden = false;
-    setupMessage.hidden = true;
-    await muatJurnal();
-  } catch (error) {
-    setupDetail.textContent = `Jurnal santri gagal dimuat: ${error.message}`;
-    setupMessage.hidden = false;
-  }
-}
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
   navigator.serviceWorker.getRegistration("./").then(async (registration) => {

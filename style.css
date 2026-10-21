@@ -486,6 +486,40 @@ button:focus-visible {
     background: #fff;
 }
 
+.udzur-toggle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0 4px;
+    padding: 12px;
+    border: 1px solid #e8c5c8;
+    border-radius: 12px;
+    background: #fff7f7;
+    cursor: pointer;
+}
+
+.udzur-toggle input[type="checkbox"] {
+    flex: 0 0 20px;
+    margin: 0;
+    accent-color: #b42332;
+}
+
+.udzur-toggle span {
+    display: grid;
+    gap: 3px;
+}
+
+.udzur-toggle strong {
+    color: #922b36;
+    font-size: 0.92rem;
+}
+
+.udzur-toggle small {
+    color: #6c5a5c;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
 .jurnal-kelompok {
     margin-top: 22px;
 }
@@ -568,6 +602,10 @@ button:focus-visible {
     margin: 0;
     padding: 6px 4px 10px;
     border-bottom: 1px solid #e9eee9;
+}
+
+.tilawah-card[hidden] {
+    display: none;
 }
 
 .tilawah-input-baris {
@@ -715,6 +753,14 @@ button:focus-visible {
         font-weight: 700;
     }
 
+    .tabel-rekap-cetak thead th.tanggal-udzur {
+        background: #f8d7da !important;
+        color: #9b1c2c !important;
+        border-color: #b42332 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     .tabel-rekap-cetak tbody td:nth-child(2) {
         padding-left: 6px;
         text-align: left;
@@ -740,261 +786,4 @@ button:focus-visible {
         font-style: italic;
         text-align: right;
     }
-}
-:root {
-  --warna-hijau: #087a4b;
-  --warna-garis: #d6e3db;
-  --warna-latar: #eef5f0;
-}
-
-[hidden] {
-  display: none !important;
-}
-
-.auth-panel,
-.setup-message {
-  width: min(100% - 2rem, 680px);
-  margin: 2rem auto;
-  padding: clamp(1.25rem, 5vw, 2.5rem);
-  border: 1px solid var(--warna-garis);
-  border-radius: 1.5rem;
-  background: #fff;
-  box-shadow: 0 16px 42px rgb(30 77 51 / 8%);
-}
-
-.auth-panel h1 {
-  margin: 0;
-  color: var(--warna-hijau);
-}
-
-.auth-intro {
-  margin: 0.5rem 0 1.5rem;
-  color: #5c7164;
-}
-
-.auth-form {
-  display: grid;
-  gap: 0.65rem;
-}
-
-.auth-form input {
-  width: 100%;
-  min-height: 3rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 0.7rem;
-  font: inherit;
-}
-
-.auth-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-top: 0.5rem;
-}
-
-.auth-actions button,
-.account-panel button {
-  min-height: 2.8rem;
-  padding: 0.65rem 1rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 0.7rem;
-  background: #e8f2ec;
-  color: #174f35;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.auth-actions #auth-submit {
-  border-color: var(--warna-hijau);
-  background: var(--warna-hijau);
-  color: #fff;
-}
-
-.auth-actions button:disabled,
-.account-panel button:disabled {
-  opacity: 0.65;
-  cursor: wait;
-}
-
-.auth-message {
-  min-height: 1.5rem;
-  margin: 0.25rem 0 0;
-  color: #8b3c24;
-}
-
-.account-panel {
-  display: flex;
-  width: min(100% - 2rem, 1000px);
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 1rem auto;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 1rem;
-  background: #fff;
-}
-
-.account-panel > div {
-  display: grid;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-#account-name {
-  overflow-wrap: anywhere;
-  color: #174f35;
-}
-
-#account-role {
-  color: #617368;
-  font-size: 0.92rem;
-}
-
-.setup-message h2 {
-  margin-top: 0;
-  color: var(--warna-hijau);
-}
-
-@media (max-width: 480px) {
-  .auth-panel,
-  .setup-message {
-    width: calc(100% - 1.25rem);
-    margin: 0.75rem auto;
-    border-radius: 1.15rem;
-  }
-
-  .account-panel {
-    width: calc(100% - 1.25rem);
-    padding: 0.8rem;
-  }
-}
-
-.role-panel {
-  width: min(100% - 2rem, 1100px);
-  margin: 1.5rem auto 3rem;
-  padding: clamp(1rem, 4vw, 2rem);
-  border: 1px solid var(--warna-garis);
-  border-radius: 1.25rem;
-  background: #fff;
-  box-shadow: 0 16px 42px rgb(30 77 51 / 8%);
-}
-
-.role-panel > h1,
-.role-card h2 {
-  color: var(--warna-hijau);
-}
-
-.role-card {
-  margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 1rem;
-  background: #f8fbf9;
-}
-
-.role-card h2,
-.role-card h3 {
-  margin-top: 0;
-}
-
-.role-form {
-  display: grid;
-  gap: 0.8rem;
-  margin: 1rem 0;
-}
-
-.role-inline-form {
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  align-items: end;
-}
-
-.role-field {
-  display: grid;
-  gap: 0.35rem;
-  color: #234333;
-}
-
-.role-field input,
-.role-field select,
-.role-field textarea,
-.role-management > label select {
-  width: 100%;
-  min-height: 2.8rem;
-  padding: 0.55rem 0.7rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 0.65rem;
-  background: #fff;
-  font: inherit;
-}
-
-.role-field textarea {
-  resize: vertical;
-}
-
-.role-panel button {
-  min-height: 2.7rem;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid var(--warna-hijau);
-  border-radius: 0.65rem;
-  background: var(--warna-hijau);
-  color: #fff;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.role-panel button:disabled {
-  opacity: 0.65;
-  cursor: wait;
-}
-
-.role-status {
-  min-height: 1.25rem;
-  color: #416b52;
-}
-
-.role-status.error {
-  color: #9b3029;
-}
-
-.role-management {
-  margin-top: 1rem;
-}
-
-.role-list {
-  padding-left: 1.3rem;
-}
-
-.student-card {
-  margin: 0.8rem 0;
-  padding: 1rem;
-  border: 1px solid var(--warna-garis);
-  border-radius: 0.85rem;
-  background: #fff;
-}
-
-.student-card h3 {
-  margin: 0;
-  color: var(--warna-hijau);
-}
-
-.student-activity-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.35rem 1rem;
-  padding-left: 1.25rem;
-}
-
-.role-muted {
-  color: #64766b;
-}
-
-@media (max-width: 480px) {
-  .role-panel {
-    width: calc(100% - 1.25rem);
-    padding: 0.85rem;
-  }
-}
+}
