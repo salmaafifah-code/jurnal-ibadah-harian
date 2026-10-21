@@ -11,7 +11,45 @@
 </head>
 
 <body>
-    <main>
+    <section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
+        <h1 id="auth-title">Jurnal Ibadah Harian</h1>
+        <p class="auth-intro">Masuk untuk menggunakan akun jurnalmu.</p>
+        <form id="auth-form" class="auth-form">
+            <label for="auth-email">Email</label>
+            <input id="auth-email" type="email" autocomplete="username" required>
+            <label for="auth-password">Kata sandi</label>
+            <input id="auth-password" type="password" autocomplete="current-password" minlength="6" required>
+            <label for="auth-display-name" id="auth-name-label" hidden>Nama</label>
+            <input id="auth-display-name" type="text" autocomplete="name" hidden>
+            <div class="auth-actions">
+                <button id="auth-submit" type="submit">Masuk</button>
+                <button id="auth-toggle" type="button">Buat akun</button>
+            </div>
+            <p id="auth-message" class="auth-message" role="status" aria-live="polite"></p>
+        </form>
+    </section>
+
+    <section id="account-panel" class="account-panel" hidden>
+        <div>
+            <strong id="account-name"></strong>
+            <span id="account-role"></span>
+        </div>
+        <select id="community-select" aria-label="Pilih komunitas" hidden></select>
+        <button id="auth-signout" type="button">Keluar</button>
+    </section>
+
+    <section id="setup-message" class="setup-message" hidden aria-live="polite">
+        <h2>Akun tersambung</h2>
+        <p id="setup-detail"></p>
+        <p>Langkah berikutnya adalah menghubungkan isi jurnal dan rekap ke database agar tersimpan di akun ini.</p>
+    </section>
+
+    <section id="role-panel" class="role-panel" hidden aria-live="polite">
+        <h1 id="role-title">Pengelolaan jurnal</h1>
+        <div id="role-content"></div>
+    </section>
+
+    <main hidden>
         <h1>Jurnal Ibadah Harian</h1>
 
         <nav class="tab-list" role="tablist" aria-label="Bagian jurnal">
@@ -88,7 +126,11 @@
 
     </main>
     <section id="dokumen-rekap" class="dokumen-rekap" aria-label="Rekap ibadah untuk dicetak" hidden></section>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
     <script src="app.js"></script>
+    <script src="role-panels.js"></script>
 </body>
 
 </html>

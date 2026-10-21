@@ -47,6 +47,11 @@ try {
   daftarIbadah = daftarIbadahBawaan.map((item) => ({ ...item }));
 }
 let idSedangDiedit = null;
+let cloudMode = false;
+let cloudContext = null;
+let cloudActivities = [];
+let cloudRangeRecords = new Map();
+let idTilawahCloud = null;
 localStorage.removeItem("jurnal-ibadah-waktu-pengingat");
 
 function ambilKotakCentang() {
@@ -224,8 +229,29 @@ function kunciUntukTanggal(tanggal) {
   return `jurnal-ibadah-${tanggal}`;
 }
 
-function muatJurnal() {
+async function muatJurnal() {
   const tanggal = tanggalInput.value;
+  if (cloudMode && cloudContext) {
+    try {
+      const jurnalCloud = await window.jurnalCloud.loadDay(
+        cloudContext.membership.id,
+        cloudContext.membership.community_id,
+        tanggal
+      );
+      cloudRangeRecords.set(tanggal, jurnalCloud);
+      ambilKotakCentang().forEach((kotak) => {
+        kotak.checked = Boolean(jurnalCloud[kotak.name]);
+      });
+      tilawahInput.value = jurnalCloud[idTilawahCloud] ?? 0;
+      pesan.textContent = Object.keys(jurnalCloud).length
+        ? "Jurnal akun ini dimuat dari database."
+        : "Belum ada jurnal tersimpan untuk tanggal ini.";
+    } catch (error) {
+      pesan.textContent = `Jurnal gagal dimuat: ${error.message}`;
+    }
+    return;
+  }
+
   const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
   const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
 
@@ -242,7 +268,7 @@ muatJurnal();
 
 tanggalInput.addEventListener("change", muatJurnal);
 
-tombolSimpan.addEventListener("click", () => {
+tombolSimpan.addEventListener("click", async () => {
   const tanggal = tanggalInput.value;
 
   if (!tanggal) {
@@ -257,6 +283,30 @@ tombolSimpan.addEventListener("click", () => {
   ambilKotakCentang().forEach((kotak) => {
     jurnal[kotak.name] = kotak.checked;
   });
+
+  if (cloudMode && cloudContext) {
+    tombolSimpan.disabled = true;
+    pesan.textContent = "Menyimpan jurnal ke akun…";
+    try {
+      const nilaiCloud = { ...jurnal };
+      nilaiCloud[idTilawahCloud] = nilaiCloud.tilawah;
+      delete nilaiCloud.tilawah;
+      await window.jurnalCloud.saveDay(
+        cloudContext.membership.id,
+        cloudContext.membership.community_id,
+        tanggal,
+        cloudActivities,
+        nilaiCloud
+      );
+      cloudRangeRecords.set(tanggal, nilaiCloud);
+      pesan.textContent = "Jurnal berhasil disimpan ke akun.";
+    } catch (error) {
+      pesan.textContent = `Jurnal gagal disimpan: ${error.message}`;
+    } finally {
+      tombolSimpan.disabled = false;
+    }
+    return;
+  }
 
   localStorage.setItem(kunciUntukTanggal(tanggal), JSON.stringify(jurnal));
   pesan.textContent = "Jurnal berhasil disimpan.";
@@ -295,7 +345,7 @@ rekapSampai.value = tanggalAkhirDefault;
   });
 });
 
-document.querySelector("#buat-rekap").addEventListener("click", () => {
+document.querySelector("#buat-rekap").addEventListener("click", async () => {
   const mulai = rekapDari.value;
   const sampai = rekapSampai.value;
 
@@ -306,6 +356,26 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
   if (!mulai || !sampai || mulai > sampai) {
     hasilRekap.textContent = "Pilih rentang tanggal yang benar.";
     return;
+  }
+
+  if (cloudMode && cloudContext) {
+    const tombolBuatRekap = document.querySelector("#buat-rekap");
+    tombolBuatRekap.disabled = true;
+    hasilRekap.textContent = "Memuat rekap dari database…";
+    try {
+      cloudRangeRecords = await window.jurnalCloud.loadRange(
+        cloudContext.membership.id,
+        cloudContext.membership.community_id,
+        mulai,
+        sampai
+      );
+    } catch (error) {
+      hasilRekap.textContent = `Rekap gagal dimuat: ${error.message}`;
+      tombolBuatRekap.disabled = false;
+      return;
+    }
+    tombolBuatRekap.disabled = false;
+    hasilRekap.replaceChildren();
   }
 
   rentangRekapCetak = { mulai, sampai };
@@ -327,14 +397,17 @@ document.querySelector("#buat-rekap").addEventListener("click", () => {
 
   while (tanggal <= tanggalAkhir) {
     const tanggalTeks = tanggal.toISOString().slice(0, 10);
-    const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggalTeks));
+    const jurnalCloud = cloudMode ? cloudRangeRecords.get(tanggalTeks) : undefined;
+    const tersimpan = cloudMode
+      ? (jurnalCloud ? JSON.stringify(jurnalCloud) : null)
+      : localStorage.getItem(kunciUntukTanggal(tanggalTeks));
 
     jumlahHari += 1;
 
     if (tersimpan) {
       const jurnal = JSON.parse(tersimpan);
       hariTersimpan += 1;
-      totalTilawah += Number(jurnal.tilawah) || 0;
+      totalTilawah += Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah) || 0;
 
       ambilKotakCentang().forEach((kotak) => {
         if (jurnal[kotak.name]) {
@@ -620,14 +693,17 @@ function buatLembarRekap({ mulai, sampai }) {
       tanggalBulan.forEach((tanggal) => {
         const sel = document.createElement("td");
         sel.className = "sel-rekap-cetak";
-        const tersimpan = localStorage.getItem(kunciUntukTanggal(tanggal));
+        const jurnalCloud = cloudMode ? cloudRangeRecords.get(tanggal) : undefined;
+        const tersimpan = cloudMode
+          ? (jurnalCloud ? JSON.stringify(jurnalCloud) : null)
+          : localStorage.getItem(kunciUntukTanggal(tanggal));
         const jurnal = tersimpan ? JSON.parse(tersimpan) : {};
 
         if (aktivitas.type === "activity" && jurnal[aktivitas.key]) {
           sel.textContent = "✓";
           sel.classList.add("selesai");
-        } else if (aktivitas.type === "tilawah" && Number(jurnal.tilawah) > 0) {
-          sel.textContent = String(Number(jurnal.tilawah));
+        } else if (aktivitas.type === "tilawah" && Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah) > 0) {
+          sel.textContent = String(Number(cloudMode ? jurnal[idTilawahCloud] : jurnal.tilawah));
           sel.classList.add("tilawah-terisi");
         }
 
@@ -669,6 +745,34 @@ tabNavigasi.forEach((tab) => {
     });
   });
 });
+
+async function tampilkanJurnalSantri(membership, profile) {
+  const setupDetail = document.querySelector("#setup-detail");
+  const setupMessage = document.querySelector("#setup-message");
+  const main = document.querySelector("main");
+  setupDetail.textContent = "Memuat daftar ibadah komunitas…";
+  try {
+    const activities = await window.jurnalCloud.loadActivities(membership.community_id);
+    cloudActivities = activities;
+    idTilawahCloud = activities.find((activity) => activity.input_type === "quantity")?.id || null;
+    daftarIbadah = activities
+      .filter((activity) => activity.input_type === "checkbox")
+      .map((activity) => ({ id: activity.id, nama: activity.name, kelompok: activity.group_name }));
+    cloudMode = true;
+    cloudContext = { membership };
+    document.querySelector(".kelola-ibadah").hidden = true;
+    tilawahCard.hidden = !idTilawahCloud;
+    namaPdfInput.value = profile?.display_name || "";
+    renderDaftarIbadah();
+    renderDaftarIbadahKelola();
+    main.hidden = false;
+    setupMessage.hidden = true;
+    await muatJurnal();
+  } catch (error) {
+    setupDetail.textContent = `Jurnal santri gagal dimuat: ${error.message}`;
+    setupMessage.hidden = false;
+  }
+}
 
 if ("serviceWorker" in navigator && window.isSecureContext) {
   navigator.serviceWorker.getRegistration("./").then(async (registration) => {
